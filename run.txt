@@ -16,3 +16,5 @@ sudo service mongod start
 echo Starting mongod server
 python3 serve.py
 echo Serving results
+xdg-open http://localhost:5000
+
