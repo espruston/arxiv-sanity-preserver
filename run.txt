@@ -1,9 +1,18 @@
 python3 fetch_papers.py
+echo Fetching papers
 python3 download_pdfs.py
+echo Downloading pdfs
 python3 parse_pdf_to_text.py
+echo Parising pdfs to text
 python3 thumb_pdf.py
+echo Creating thumbnails
 python3 analyze.py
+echo Analyzing tfidf vectors
 python3 buildsvm.py
+echo Training SVMs
 python3 make_cache.py
+echo Making cache
 sudo service mongod start
+echo Starting mongod server
 python3 serve.py
+echo Serving results
