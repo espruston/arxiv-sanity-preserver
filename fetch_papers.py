@@ -9,14 +9,15 @@ import time
 import pickle
 import random
 import argparse
-import urllib.request
+#import urllib.request
+import urllib
 import feedparser
 
 from utils import Config, safe_pickle_dump
 
 def encode_feedparser_dict(d):
-  """ 
-  helper function to get rid of feedparser bs with a deep copy. 
+  """
+  helper function to get rid of feedparser bs with a deep copy.
   I hate when libs wrap simple things in their own classes.
   """
   if isinstance(d, feedparser.FeedParserDict) or isinstance(d, dict):
@@ -33,7 +34,7 @@ def encode_feedparser_dict(d):
     return d
 
 def parse_arxiv_url(url):
-  """ 
+  """
   examples is http://arxiv.org/abs/1512.08756v2
   we want to extract the raw id and the version
   """
@@ -48,7 +49,7 @@ if __name__ == "__main__":
   # parse input arguments
   parser = argparse.ArgumentParser()
   parser.add_argument('--search-query', type=str,
-                      default='cat:cs.CV+OR+cat:cs.AI+OR+cat:cs.LG+OR+cat:cs.CL+OR+cat:cs.NE+OR+cat:stat.ML',
+                      default='cat:astro-ph.GA+OR+cat:astro-ph.CO+OR+cat:astro-ph.EP+OR+cat:astro-ph.HE+OR+cat:astro-ph.IM+OR+cat:astro-ph.SR',
                       help='query used for arxiv API. See http://arxiv.org/help/api/user-manual#detailed_examples')
   parser.add_argument('--start-index', type=int, default=0, help='0 = most recent API result')
   parser.add_argument('--max-index', type=int, default=10000, help='upper bound on paper index we will fetch')
@@ -79,8 +80,9 @@ if __name__ == "__main__":
     print("Results %i - %i" % (i,i+args.results_per_iteration))
     query = 'search_query=%s&sortBy=lastUpdatedDate&start=%i&max_results=%i' % (args.search_query,
                                                          i, args.results_per_iteration)
-    with urllib.request.urlopen(base_url+query) as url:
-      response = url.read()
+    #with urllib.request.urlopen(base_url+query) as url:
+    url = urllib.urlopen(base_url+query)
+    response = url.read()
     parse = feedparser.parse(response)
     num_added = 0
     num_skipped = 0
@@ -121,4 +123,3 @@ if __name__ == "__main__":
   if num_added_total > 0:
     print('Saving database with %d papers to %s' % (len(db), Config.db_path))
     safe_pickle_dump(db, Config.db_path)
-
